@@ -8,8 +8,7 @@ import org.springframework.web.reactive.function.client.WebClientResponseExcepti
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class EmployeeRestClientTest {
 
@@ -38,5 +37,41 @@ public class EmployeeRestClientTest {
 
         int employeeId = 10;
         Assertions.assertThrows(WebClientResponseException.class, ()->employeeRestClient.retrieveEmployeeById(employeeId));
+    }
+
+    @Test
+    void retrieveEmployeeByName(){
+        String name = "Chris";
+        List<Employee> employees = employeeRestClient.retrieveEmployeeByName(name);
+        assertTrue(employees.size() > 0);
+
+        Employee  employee = employees.get(0);
+        assertEquals("Chris", employee.getFirstName());
+    }
+
+    @Test
+    void retrieveEmployeeByName_notFound(){
+        String name = "ABC";
+        Assertions.assertThrows(WebClientResponseException.class, ()->employeeRestClient.retrieveEmployeeByName(name));
+
+    }
+
+    @Test
+    void addNewEmployee(){
+        Employee employee = new Employee(null,"Iron", "Man", 54, "male", "Architect");
+
+        Employee employee1 = employeeRestClient.addNewEmployee(employee);
+        System.out.println("employee1  : " + employee1);
+        assertNotNull(employee1.getId());
+
+    }
+
+    @Test
+    void addNewEmployee_BadRequest(){
+        Employee employee = new Employee(null,null, "Man", 54, "male", "Architect");
+
+        String expectedErrorMessage = "Please pass all the input fields : [firstName]";
+        Assertions.assertThrows(WebClientResponseException.class, () ->  employeeRestClient.addNewEmployee(employee), expectedErrorMessage);
+
     }
 }
