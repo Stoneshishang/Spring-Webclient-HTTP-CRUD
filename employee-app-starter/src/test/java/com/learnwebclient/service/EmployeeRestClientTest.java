@@ -1,8 +1,10 @@
 package com.learnwebclient.service;
 
 import com.learnwebclient.dto.Employee;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.reactive.function.client.WebClientResponseException;
 
 import java.util.List;
 
@@ -29,5 +31,12 @@ public class EmployeeRestClientTest {
         int employeeId = 1;
         Employee employee = employeeRestClient.retrieveEmployeeById(employeeId);
         assertEquals("Chris", employee.getFirstName());
+    }
+
+    @Test
+    void retrieveEmployeeById_notFound(){
+
+        int employeeId = 10;
+        Assertions.assertThrows(WebClientResponseException.class, ()->employeeRestClient.retrieveEmployeeById(employeeId));
     }
 }
